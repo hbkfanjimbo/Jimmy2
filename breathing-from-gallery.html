@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Background</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #0a0a0a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .background-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .breathing-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            filter: brightness(0.85) contrast(1.1);
+            animation: breatheScale 6s ease-in-out infinite,
+                        breatheOpacity 6s ease-in-out infinite,
+                        breatheLight 6s ease-in-out infinite;
+        }
+
+        @keyframes breatheScale {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.04);
+            }
+        }
+
+        @keyframes breatheOpacity {
+            0%, 100% {
+                opacity: 0.92;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes breatheLight {
+            0%, 100% {
+                filter: brightness(0.85) contrast(1.1);
+            }
+            50% {
+                filter: brightness(0.95) contrast(1.15);
+            }
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                rgba(0, 0, 0, 0.15) 0%,
+                rgba(0, 0, 0, 0.05) 50%,
+                rgba(0, 0, 0, 0.15) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .control-btn.active {
+            background: linear-gradient(135deg, #8338ec, #ff006e);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .effect-selector {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px 25px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .effect-btn {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .effect-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .effect-btn.active {
+            background: linear-gradient(135deg, #06ffa5, #3a86ff);
+            border-color: rgba(255, 255, 255, 0.8);
+            color: white;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 100;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .effect-selector {
+                flex-wrap: wrap;
+                width: calc(100% - 30px);
+                left: 15px;
+                transform: none;
+            }
+
+            .controls {
+                flex-wrap: wrap;
+                width: calc(100% - 30px);
+                left: 15px;
+                transform: none;
+                bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="background-wrapper" id="backgroundWrapper">
+            <img src="" alt="Breathing Photo" class="breathing-image" id="breathingImage">
+        </div>
+        <div class="overlay"></div>
+    </div>
+
+    <button class="back-btn" onclick="goBack()" title="Back to Gallery">←</button>
+
+    <div class="effect-selector" id="effectSelector">
+        <button class="effect-btn active" onclick="setEffect('none')">Normal</button>
+        <button class="effect-btn" onclick="setEffect('soft')">Soft</button>
+        <button class="effect-btn" onclick="setEffect('vibrant')">Vibrant</button>
+    </div>
+
+    <div class="controls" id="controls">
+        <button class="control-btn" onclick="toggleBreathing()">⏸ Pause</button>
+        <button class="control-btn" onclick="changePace('slow')">🐢 Slow</button>
+        <button class="control-btn" onclick="changePace('normal')">⚡ Normal</button>
+        <button class="control-btn" onclick="changePace('fast')">🐇 Fast</button>
+    </div>
+
+    <script>
+        let isBreathing = true;
+        let currentEffect = 'none';
+        let currentPace = 'normal';
+        const breathingImage = document.getElementById('breathingImage');
+
+        const effects = {
+            none: 'brightness(0.85) contrast(1.1)',
+            soft: 'brightness(0.75) contrast(0.95) blur(1px)',
+            vibrant: 'brightness(1) contrast(1.3) saturate(1.2)'
+        };
+
+        const paces = {
+            slow: '8s',
+            normal: '6s',
+            fast: '4s'
+        };
+
+        function setEffect(effect) {
+            currentEffect = effect;
+            breathingImage.style.filter = effects[effect];
+
+            document.querySelectorAll('.effect-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function toggleBreathing() {
+            const btn = event.target;
+            if (isBreathing) {
+                breathingImage.style.animationPlayState = 'paused';
+                btn.textContent = '▶ Resume';
+                isBreathing = false;
+            } else {
+                breathingImage.style.animationPlayState = 'running';
+                btn.textContent = '⏸ Pause';
+                isBreathing = true;
+            }
+        }
+
+        function changePace(pace) {
+            currentPace = pace;
+            const paceValue = paces[pace];
+
+            const style = document.createElement('style');
+            style.textContent = `
+                .breathing-image {
+                    animation: breatheScale ${paceValue} ease-in-out infinite,
+                                breatheOpacity ${paceValue} ease-in-out infinite,
+                                breatheLight ${paceValue} ease-in-out infinite !important;
+                }
+            `;
+            document.head.appendChild(style);
+
+            document.querySelectorAll('.control-btn').forEach((btn, idx) => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function goBack() {
+            window.location.href = 'photo-gallery.html';
+        }
+
+        window.addEventListener('load', () => {
+            const photoSrc = localStorage.getItem('selectedBreathingPhoto');
+            const photoName = localStorage.getItem('selectedPhotoName');
+
+            if (photoSrc) {
+                breathingImage.src = photoSrc;
+                document.title = `Breathing - ${photoName || 'Photo'}`;
+            } else {
+                alert('No photo selected! Going back to gallery...');
+                goBack();
+            }
+        });
+    </script>
+</body>
+</html>

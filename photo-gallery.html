@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d1b3d 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+
+        .upload-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+            gap: 15px;
+        }
+
+        .upload-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #8338ec, #ff006e);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(131, 56, 236, 0.4);
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .photo-card {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            aspect-ratio: 1;
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(131, 56, 236, 0.6);
+            box-shadow: 0 15px 40px rgba(131, 56, 236, 0.2);
+        }
+
+        .photo-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .photo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .photo-card:hover .photo-overlay {
+            opacity: 1;
+        }
+
+        .photo-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .action-btn:hover {
+            background: rgba(131, 56, 236, 0.8);
+            transform: scale(1.1);
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(255, 0, 110, 0.8);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .empty-state h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(30, 30, 46, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .preview-img {
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .breathing-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #06ffa5, #3a86ff);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .breathing-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(6, 255, 165, 0.3);
+        }
+
+        .action-link {
+            display: block;
+            padding: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            text-align: center;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .action-link:hover {
+            background: rgba(131, 56, 236, 0.2);
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .upload-section {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖼️ My Photos</h1>
+            <p>Curate your breathing backgrounds</p>
+        </header>
+
+        <div class="upload-section">
+            <button class="upload-btn" onclick="document.getElementById('photoInput').click()">
+                📁 Upload Photo
+            </button>
+            <input type="file" id="photoInput" class="upload-input" accept="image/*" multiple>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- Photos will be loaded here -->
+        </div>
+
+        <div class="empty-state" id="emptyState">
+            <h2>No photos yet</h2>
+            <p>Upload your first photo to get started!</p>
+        </div>
+    </div>
+
+    <!-- Photo Preview Modal -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="photoName">Photo</h2>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+            <img id="previewImage" class="preview-img" src="" alt="Preview">
+            <button class="breathing-btn" onclick="openBreathing()">🌬️ Open in Breathing Mode</button>
+            <a href="#" class="action-link" id="downloadLink" download>⬇️ Download</a>
+        </div>
+    </div>
+
+    <script>
+        const photoInput = document.getElementById('photoInput');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const emptyState = document.getElementById('emptyState');
+        const previewModal = document.getElementById('previewModal');
+        const previewImage = document.getElementById('previewImage');
+        const photoName = document.getElementById('photoName');
+        const downloadLink = document.getElementById('downloadLink');
+
+        let photos = [];
+        let selectedPhoto = null;
+
+        photoInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const photo = {
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        src: event.target.result,
+                        file: file
+                    };
+                    photos.unshift(photo);
+                    localStorage.setItem('photos', JSON.stringify(photos.map(p => ({ id: p.id, name: p.name, src: p.src }))));
+                    renderGallery();
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        function renderGallery() {
+            galleryGrid.innerHTML = '';
+
+            if (photos.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            photos.forEach(photo => {
+                const card = document.createElement('div');
+                card.className = 'photo-card';
+                card.innerHTML = `
+                    <img src="${photo.src}" alt="${photo.name}">
+                    <div class="photo-overlay">
+                        <div class="photo-actions">
+                            <button class="action-btn" onclick="openPreview('${photo.id}')" title="Preview">👁️</button>
+                            <button class="action-btn" onclick="deletePhoto('${photo.id}')" title="Delete" style="background: rgba(255, 0, 110, 0.2);">🗑️</button>
+                        </div>
+                    </div>
+                `;
+                galleryGrid.appendChild(card);
+            });
+        }
+
+        function openPreview(photoId) {
+            selectedPhoto = photos.find(p => p.id.toString() === photoId.toString());
+            if (selectedPhoto) {
+                photoName.textContent = selectedPhoto.name;
+                previewImage.src = selectedPhoto.src;
+                downloadLink.href = selectedPhoto.src;
+                downloadLink.download = selectedPhoto.name;
+                previewModal.classList.add('active');
+            }
+        }
+
+        function closeModal() {
+            previewModal.classList.remove('active');
+            selectedPhoto = null;
+        }
+
+        function deletePhoto(photoId) {
+            if (confirm('Delete this photo?')) {
+                photos = photos.filter(p => p.id.toString() !== photoId.toString());
+                localStorage.setItem('photos', JSON.stringify(photos.map(p => ({ id: p.id, name: p.name, src: p.src }))));
+                renderGallery();
+            }
+        }
+
+        function openBreathing() {
+            if (selectedPhoto) {
+                localStorage.setItem('selectedBreathingPhoto', selectedPhoto.src);
+                localStorage.setItem('selectedPhotoName', selectedPhoto.name);
+                window.location.href = 'breathing-from-gallery.html';
+            }
+        }
+
+        previewModal.addEventListener('click', (e) => {
+            if (e.target === previewModal) {
+                closeModal();
+            }
+        });
+
+        window.addEventListener('load', () => {
+            const savedPhotos = localStorage.getItem('photos');
+            if (savedPhotos) {
+                photos = JSON.parse(savedPhotos);
+                renderGallery();
+            }
+        });
+    </script>
+</body>
+</html>
