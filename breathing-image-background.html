@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Image Background</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #0a0a0a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .background-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .breathing-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            filter: brightness(0.8);
+            animation: breatheScale 6s ease-in-out infinite,
+                        breatheOpacity 6s ease-in-out infinite;
+        }
+
+        .breathing-image.effect-blur {
+            animation: breatheScale 6s ease-in-out infinite,
+                        breatheOpacity 6s ease-in-out infinite,
+                        breatheBlur 6s ease-in-out infinite;
+        }
+
+        .breathing-image.effect-light {
+            animation: breatheScale 6s ease-in-out infinite,
+                        breatheOpacity 6s ease-in-out infinite,
+                        breatheLight 6s ease-in-out infinite;
+        }
+
+        .breathing-image.effect-color {
+            animation: breatheScale 6s ease-in-out infinite,
+                        breatheOpacity 6s ease-in-out infinite,
+                        breatheColor 6s ease-in-out infinite;
+        }
+
+        @keyframes breatheScale {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes breatheOpacity {
+            0%, 100% {
+                opacity: 0.9;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes breatheBlur {
+            0%, 100% {
+                filter: brightness(0.8) blur(0px);
+            }
+            50% {
+                filter: brightness(0.9) blur(2px);
+            }
+        }
+
+        @keyframes breatheLight {
+            0%, 100% {
+                filter: brightness(0.8);
+            }
+            50% {
+                filter: brightness(1);
+            }
+        }
+
+        @keyframes breatheColor {
+            0%, 100% {
+                filter: brightness(0.8) saturate(100%);
+            }
+            50% {
+                filter: brightness(0.95) saturate(130%);
+            }
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                rgba(0, 0, 0, 0.2) 0%,
+                rgba(0, 0, 0, 0.1) 50%,
+                rgba(0, 0, 0, 0.2) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .control-btn.active {
+            background: linear-gradient(135deg, #8338ec, #ff006e);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .upload-area {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 200;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 60px 40px;
+            border-radius: 20px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .upload-area.hidden {
+            display: none;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .upload-area.dragover {
+            border-color: #8338ec;
+            background: rgba(131, 56, 236, 0.1);
+        }
+
+        .upload-area h2 {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .upload-area p {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .upload-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #8338ec, #ff006e);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(131, 56, 236, 0.4);
+        }
+
+        .effect-selector {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px 25px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .effect-btn {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .effect-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .effect-btn.active {
+            background: linear-gradient(135deg, #06ffa5, #3a86ff);
+            border-color: rgba(255, 255, 255, 0.8);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .upload-area {
+                padding: 40px 25px;
+            }
+
+            .upload-area h2 {
+                font-size: 1.4rem;
+            }
+
+            .effect-selector {
+                flex-wrap: wrap;
+                width: calc(100% - 30px);
+                left: 15px;
+                transform: none;
+            }
+
+            .controls {
+                flex-wrap: wrap;
+                width: calc(100% - 30px);
+                left: 15px;
+                transform: none;
+                bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="background-wrapper" id="backgroundWrapper">
+            <div class="upload-area" id="uploadArea">
+                <h2>🎨 Upload Your Image</h2>
+                <p>Click to select or drag & drop your photo</p>
+                <input type="file" id="imageInput" class="upload-input" accept="image/*">
+                <button class="upload-btn" onclick="document.getElementById('imageInput').click()">
+                    Choose Image
+                </button>
+            </div>
+        </div>
+        <div class="overlay"></div>
+    </div>
+
+    <div class="effect-selector" id="effectSelector" style="display: none;">
+        <button class="effect-btn active" onclick="setEffect('none')">Normal</button>
+        <button class="effect-btn" onclick="setEffect('blur')">Blur</button>
+        <button class="effect-btn" onclick="setEffect('light')">Light</button>
+        <button class="effect-btn" onclick="setEffect('color')">Color</button>
+    </div>
+
+    <div class="controls" id="controls" style="display: none;">
+        <button class="control-btn" onclick="toggleBreathing()">⏸ Pause</button>
+        <button class="control-btn" onclick="document.getElementById('imageInput').click()">📁 Change</button>
+        <button class="control-btn" onclick="resetImage()">↻ Reset</button>
+    </div>
+
+    <script>
+        let currentImage = null;
+        let isBreathing = true;
+        let currentEffect = 'none';
+
+        const imageInput = document.getElementById('imageInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const backgroundWrapper = document.getElementById('backgroundWrapper');
+        const controls = document.getElementById('controls');
+        const effectSelector = document.getElementById('effectSelector');
+
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                loadImage(file);
+            }
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                loadImage(file);
+            }
+        });
+
+        uploadArea.addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = `breathing-image effect-${currentEffect}`;
+                img.onload = () => {
+                    backgroundWrapper.innerHTML = '';
+                    backgroundWrapper.appendChild(img);
+                    currentImage = img;
+                    uploadArea.classList.add('hidden');
+                    controls.style.display = 'flex';
+                    effectSelector.style.display = 'flex';
+                    localStorage.setItem('breathingImage', e.target.result);
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function setEffect(effect) {
+            currentEffect = effect;
+            if (currentImage) {
+                currentImage.className = `breathing-image effect-${effect}`;
+                document.querySelectorAll('.effect-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                event.target.classList.add('active');
+                localStorage.setItem('breathingEffect', effect);
+            }
+        }
+
+        function toggleBreathing() {
+            const btn = event.target;
+            if (isBreathing) {
+                currentImage.style.animationPlayState = 'paused';
+                btn.textContent = '▶ Resume';
+                isBreathing = false;
+            } else {
+                currentImage.style.animationPlayState = 'running';
+                btn.textContent = '⏸ Pause';
+                isBreathing = true;
+            }
+        }
+
+        function resetImage() {
+            localStorage.removeItem('breathingImage');
+            localStorage.removeItem('breathingEffect');
+            location.reload();
+        }
+
+        window.addEventListener('load', () => {
+            const savedImage = localStorage.getItem('breathingImage');
+            const savedEffect = localStorage.getItem('breathingEffect') || 'none';
+
+            if (savedImage) {
+                const img = document.createElement('img');
+                img.src = savedImage;
+                img.className = `breathing-image effect-${savedEffect}`;
+                img.onload = () => {
+                    backgroundWrapper.innerHTML = '';
+                    backgroundWrapper.appendChild(img);
+                    currentImage = img;
+                    currentEffect = savedEffect;
+                    uploadArea.classList.add('hidden');
+                    controls.style.display = 'flex';
+                    effectSelector.style.display = 'flex';
+
+                    document.querySelectorAll('.effect-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.querySelector(`[onclick="setEffect('${savedEffect}')"]`).classList.add('active');
+                };
+            }
+        });
+    </script>
+</body>
+</html>
