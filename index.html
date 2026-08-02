@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Backgrounds - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d1b3d 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.95);
+            max-width: 600px;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 50px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: rgba(255, 255, 255, 0.95);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .menu-item:hover {
+            background: rgba(131, 56, 236, 0.2);
+            border-color: rgba(131, 56, 236, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(131, 56, 236, 0.2);
+        }
+
+        .menu-item.primary {
+            background: linear-gradient(135deg, #8338ec, #ff006e);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-item.primary:hover {
+            box-shadow: 0 10px 30px rgba(131, 56, 236, 0.4);
+        }
+
+        .description {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .menu-item {
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌬️ Breathing Backgrounds</h1>
+        <p class="subtitle">Choose your experience</p>
+
+        <div class="menu">
+            <a href="photo-gallery.html" class="menu-item primary">
+                📸 Photo Gallery
+                <div class="description">Upload & manage your photos</div>
+            </a>
+
+            <a href="breathing-background.html" class="menu-item">
+                🎨 Gradient Breathing
+                <div class="description">Animated color gradients</div>
+            </a>
+
+            <a href="puppies-breathing.html" class="menu-item">
+                🐕 Puppy Breathing
+                <div class="description">Your adorable puppies</div>
+            </a>
+
+            <a href="breathing-image-background.html" class="menu-item">
+                🖼️ Upload Image
+                <div class="description">Use any image with breathing effects</div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
