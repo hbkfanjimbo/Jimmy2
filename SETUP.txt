@@ -1,0 +1,61 @@
+🌬️ BREATHING BACKGROUNDS - PHONE SETUP 🌬️
+================================================
+
+STEP 1: On Your Computer (Mac/Windows/Linux)
+================================================
+Open Terminal or Command Prompt and paste this:
+
+cd /home/user/Jimmy2 && python3 -m http.server 8000
+
+Leave this window open! You should see:
+"Serving HTTP on 0.0.0.0 port 8000"
+
+
+STEP 2: Get Your Computer's IP Address
+================================================
+Open a NEW Terminal/Command Prompt and paste:
+
+hostname -I
+
+You'll see a number like: 192.168.1.105
+Write this down!
+
+
+STEP 3: On Your Phone (iOS or Android)
+================================================
+Open your phone's browser and go to:
+
+http://[YOUR-IP]:8000
+
+Replace [YOUR-IP] with the number from Step 2
+Example: http://192.168.1.105:8000
+
+
+STEP 4: Add to Home Screen
+================================================
+
+iOS (iPhone):
+- Tap the Share button (arrow at bottom)
+- Tap "Add to Home Screen"
+- Name it "Breathing"
+- Tap "Add"
+
+Android:
+- Tap the three dots menu (top right)
+- Tap "Install app" or "Add to Home screen"
+- Confirm
+
+
+TROUBLESHOOTING:
+================================================
+❌ "Page won't load"
+   → Make sure computer and phone are on SAME WiFi
+   → Make sure Terminal window is still open
+   → Try: http://192.168.1.XXX:8000 (check IP again)
+
+❌ "Can't find IP address"
+   → Try hostname -I (Mac/Linux) or ipconfig (Windows)
+   → Look for line starting with 192.168 or 10.0
+
+
+Questions? Ask Claude!
